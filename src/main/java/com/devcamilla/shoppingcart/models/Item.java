@@ -1,24 +1,15 @@
 package com.devcamilla.shoppingcart.models;
 
-import java.util.UUID;
-
-public class Item {
-    private UUID id;
-
+public class Item extends Entity {
     private String code;
 
     private double price;
 
     protected Item() {}
 
-    public Item(String code, double price){
-        this.id = UUID.randomUUID();
+    public Item(String code, double price) {
         this.code = code;
         this.price = price;
-    }
-
-    public UUID getId() {
-        return id;
     }
 
     public String getCode() {
