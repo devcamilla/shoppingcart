@@ -1,24 +1,26 @@
 package com.devcamilla.shoppingcart.repositories;
 
 import com.devcamilla.shoppingcart.models.Item;
+import com.devcamilla.shoppingcart.settings.DatasourceSettings;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
 
 public class ItemRepository {
-    private final String url = "jdbc:postgresql://localhost:5432/shoppingcart";
-    private final String user = "postgres";
-    private final String password = "admin";
+    private DatasourceSettings datasourceSettings;
+
+    public ItemRepository(DatasourceSettings datasourceSettings){
+        this.datasourceSettings = datasourceSettings;
+    }
 
     public void save(Item item){
         String sql = "insert into items (id, content, timestamp) values (?, ?, ?)";
 
-        try (Connection con = DriverManager.getConnection(url, user, password); PreparedStatement preparedStatement = con.prepareStatement(sql)) {
+        try (Connection con = DriverManager.getConnection(datasourceSettings.getUrl(), datasourceSettings.getUsername(), datasourceSettings.getPassword()); PreparedStatement preparedStatement = con.prepareStatement(sql)) {
             Date date = new java.util.Date();
             Timestamp timestampNow = new Timestamp(date.getTime());
 
@@ -39,7 +41,7 @@ public class ItemRepository {
     public List<Item> get(){
         String sql = "select * from items";
 
-        try (Connection con = DriverManager.getConnection(url, user, password); PreparedStatement preparedStatement = con.prepareStatement(sql)) {
+        try (Connection con = DriverManager.getConnection(datasourceSettings.getUrl(), datasourceSettings.getUsername(), datasourceSettings.getPassword()); PreparedStatement preparedStatement = con.prepareStatement(sql)) {
             ResultSet result = preparedStatement.executeQuery();
             List<Item> entities = new ArrayList<>();
             while (result.next()) {
@@ -64,7 +66,7 @@ public class ItemRepository {
     public void delete(UUID id) {
         String sql = "delete from items where id = ?";
 
-        try (Connection con = DriverManager.getConnection(url, user, password); PreparedStatement preparedStatement = con.prepareStatement(sql)) {
+        try (Connection con = DriverManager.getConnection(datasourceSettings.getUrl(), datasourceSettings.getUsername(), datasourceSettings.getPassword()); PreparedStatement preparedStatement = con.prepareStatement(sql)) {
             preparedStatement.setObject(1, id);
             preparedStatement.execute();
         } catch (SQLException ex) {
@@ -75,7 +77,7 @@ public class ItemRepository {
     public Optional<Item> get(UUID id) {
         String sql = "select * from items where id = ?";
 
-        try (Connection con = DriverManager.getConnection(url, user, password); PreparedStatement preparedStatement = con.prepareStatement(sql)) {
+        try (Connection con = DriverManager.getConnection(datasourceSettings.getUrl(), datasourceSettings.getUsername(), datasourceSettings.getPassword()); PreparedStatement preparedStatement = con.prepareStatement(sql)) {
             preparedStatement.setObject(1, id);
             ResultSet result = preparedStatement.executeQuery();
 
